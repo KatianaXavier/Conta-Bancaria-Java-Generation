@@ -1,6 +1,6 @@
 package conta_bancaria.model;
 
-public class Conta {
+public abstract class Conta {
 	// aqui não tem método main!
 	// model porque aqui define-se o pacote do modelo model. características
 	// (ATRIBUTOS) que toda conta terá: CC, CP etc

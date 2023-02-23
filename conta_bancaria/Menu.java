@@ -14,39 +14,7 @@ public class Menu {
 
 		Scanner leia = new Scanner(System.in);
 
-		// cria o objeto conta c1
-		Conta c1 = new Conta(1, 123, 1, "Katiana Xavier", 30000.0f);
-
-		// mostra as infos da conta
-		c1.visualizar();
-
-		// altera o valor da conta
-		c1.setSaldo(35000.0f);
-
-		// visualiza apenas o saldo da conta c1
-		System.out.println(c1.getSaldo());
-
-		// cria o objeto conta c2
-		Conta c2 = new Conta(2, 456, 2, "Lunna Xavier", 30000.0f);
-
-		// mostra as infos da conta
-		c2.visualizar();
-
-		// efetua um saque na conta c2 e visualizamos o novo saldo
-		if (c2.sacar(10000.0f)) {
-			System.out.println("\n\n" + c2.getSaldo());
-		}
-
-		// depósito na conta c1
-		c1.depositar(10000.0f);
-		// visualiza os dados da conta c1 após o depósito
-		c1.visualizar();
-
 		ContaCorrente c3 = new ContaCorrente(3, 123, 1, "Rafael Xavier", 30000.0f, 1000.0f);
-
-		c3.visualizar();
-
-		c3.sacar(32000);
 
 		c3.visualizar();
 
