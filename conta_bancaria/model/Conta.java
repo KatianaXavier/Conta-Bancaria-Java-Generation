@@ -81,10 +81,10 @@ public class Conta {
 
 		this.setSaldo(this.getSaldo() - valor);
 		return true;
-		
+
 	}
-	
-	//saldo + valor do depósito
+
+	// saldo + valor do depósito
 	public void depositar(float valor) {
 		this.setSaldo(this.getSaldo() + valor);
 	}
@@ -101,7 +101,7 @@ public class Conta {
 		}
 
 		System.out.println("******************");
-		System.out.println("  DADOS DA CONTA ");
+		System.out.println("  DADOS DA CONTA  ");
 		System.out.println("******************");
 		System.out.println("Número da conta: " + this.numero);
 		System.out.println("Número da agência: " + this.agencia);
