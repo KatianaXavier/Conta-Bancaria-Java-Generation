@@ -1,9 +1,10 @@
 package conta_bancaria;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import conta_bancaria.model.Conta;
+import conta_bancaria.controller.ContaController;
 import conta_bancaria.model.ContaCorrente;
 import conta_bancaria.model.ContaPoupanca;
 import conta_bancaria.util.Cores;
@@ -14,13 +15,23 @@ public class Menu {
 
 		Scanner leia = new Scanner(System.in);
 
-		ContaCorrente c3 = new ContaCorrente(3, 123, 1, "Rafael Xavier", 30000.0f, 1000.0f);
+		ContaController contas = new ContaController();
 
-		c3.visualizar();
+		System.out.println("\nCriar Contas\n");
 
-		ContaPoupanca c4 = new ContaPoupanca(4, 123, 2, "Francisca Xavier", 20000.0f, 5);
+		ContaCorrente cc1 = new ContaCorrente(contas.gerarNumero(), 123, 1, "João da Silva", 1000f, 100.0f);
+		contas.cadastrar(cc1);
 
-		c4.visualizar();
+		ContaCorrente cc2 = new ContaCorrente(contas.gerarNumero(), 124, 1, "Maria da Silva", 2000f, 100.0f);
+		contas.cadastrar(cc2);
+
+		ContaPoupanca cp1 = new ContaPoupanca(contas.gerarNumero(), 125, 2, "Mariana dos Santos", 4000f, 12);
+		contas.cadastrar(cp1);
+
+		ContaPoupanca cp2 = new ContaPoupanca(contas.gerarNumero(), 125, 2, "Juliana Ramos", 8000f, 15);
+		contas.cadastrar(cp2);
+
+		contas.listarTodas();
 
 		int opcao, numero, agencia, tipo, aniversario, numeroDestino;
 		float saldo, limite, valor;
@@ -49,7 +60,13 @@ public class Menu {
 			System.out.println("Entre com a opção desejada:                          ");
 			System.out.println("                                                     " + Cores.TEXT_RESET);
 
-			opcao = leia.nextInt();
+			try {
+				opcao = leia.nextInt();
+			} catch (InputMismatchException e) {
+				System.out.println("Digite valores inteiros!");
+				leia.nextLine();
+				opcao = 0;
+			}
 
 			if (opcao == 9) {
 				System.out.println("Programa finalizado.");
@@ -81,14 +98,15 @@ public class Menu {
 				case 1 -> {
 					System.out.println("Limite da conta corrente: ");
 					limite = leia.nextFloat();
-					ContaCorrente cc = new ContaCorrente(0, agencia, tipo, titular, saldo, limite);
-					cc.visualizar();
+					contas.cadastrar(new ContaCorrente(contas.gerarNumero(), agencia, tipo, titular, saldo, limite));
+
 				}
 				case 2 -> {
 					System.out.println("Aniversário da conta poupança: ");
 					aniversario = leia.nextInt();
-					ContaPoupanca cp = new ContaPoupanca(0, agencia, tipo, titular, saldo, aniversario);
-					cp.visualizar();
+					contas.cadastrar(
+							new ContaPoupanca(contas.gerarNumero(), agencia, tipo, titular, saldo, aniversario));
+
 				}
 
 				}
@@ -98,13 +116,17 @@ public class Menu {
 			case 2:
 				System.out.println("Listar todas as contas \n\n");
 
+				contas.listarTodas();
+
 				keyPress();
 				break;
 			case 3:
-				System.out.println("Consultar dados da conta por número \n\n");
+				System.out.println("Consultar dados da conta por número\n\n");
 
 				System.out.println("Número da conta: ");
 				numero = leia.nextInt();
+
+				contas.procurarPorNumero(numero);
 
 				keyPress();
 				break;
@@ -114,46 +136,45 @@ public class Menu {
 				System.out.println("Número da conta: ");
 				numero = leia.nextInt();
 
-				// TODO condicional pra ver se a conta existe
+				if (contas.buscarNaCollection(numero) != null) {
 
-				System.out.println("Número da agência: ");
-				agencia = leia.nextInt();
+					System.out.println("Número da agência: ");
+					agencia = leia.nextInt();
 
-				System.out.println("Nome do titular: ");
-				leia.skip("\\R?");
-				titular = leia.nextLine();
+					System.out.println("Nome do titular: ");
+					leia.skip("\\R?");
+					titular = leia.nextLine();
 
-				// TODO busca do tipo
-				tipo = 0;
+					tipo = contas.retornaTipo(numero);
 
-				System.out.println("Saldo da conta: ");
-				saldo = leia.nextFloat();
+					System.out.println("Saldo da conta: ");
+					saldo = leia.nextFloat();
 
-				switch (tipo) {
-				case 1 -> {
-					System.out.println("Limite da conta corrente: ");
-					limite = leia.nextFloat();
-					ContaCorrente cc = new ContaCorrente(0, agencia, tipo, titular, saldo, limite);
-					cc.visualizar();
+					switch (tipo) {
+					case 1 -> {
+						System.out.println("Limite da conta corrente: ");
+						limite = leia.nextFloat();
+						contas.atualizar(new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
+					}
+					case 2 -> {
+						System.out.println("Aniversário da conta poupança: ");
+						aniversario = leia.nextInt();
+						ContaPoupanca cp = (new ContaPoupanca(0, agencia, tipo, titular, saldo, aniversario));
+					}
+					}
+				} else {
+					System.out.println("A conta não foi encontrada!");
+
+					keyPress();
+					break;
 				}
-				case 2 -> {
-					System.out.println("Aniversário da conta poupança: ");
-					aniversario = leia.nextInt();
-					ContaPoupanca cp = new ContaPoupanca(0, agencia, tipo, titular, saldo, aniversario);
-					cp.visualizar();
-				}
-
-				}
-
-				keyPress();
-				break;
 			case 5:
 				System.out.println("Apagar a conta \n\n");
 
 				System.out.println("Número da conta: ");
 				numero = leia.nextInt();
 
-				// TODO chamada para o método deletar
+				contas.deletar(numero);
 
 				keyPress();
 				break;
@@ -214,7 +235,7 @@ public class Menu {
 
 		try {
 
-			System.out.println(Cores.TEXT_RESET + "\n\nPressione Enter para Continuar.");
+			System.out.println(Cores.TEXT_RESET + "\n\nPressione Enter para continuar");
 			System.in.read();
 
 		} catch (IOException e) {
